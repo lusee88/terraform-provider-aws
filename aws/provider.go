@@ -737,6 +737,7 @@ func Provider() *schema.Provider {
 			"aws_iam_user":                                            resourceAwsIamUser(),
 			"aws_iam_user_login_profile":                              resourceAwsIamUserLoginProfile(),
 			"aws_imagebuilder_component":                              resourceAwsImageBuilderComponent(),
+			"aws_imagebuilder_container_recipe":                       resourceAwsImageBuilderContainerRecipe(),
 			"aws_imagebuilder_distribution_configuration":             resourceAwsImageBuilderDistributionConfiguration(),
 			"aws_imagebuilder_image":                                  resourceAwsImageBuilderImage(),
 			"aws_imagebuilder_image_pipeline":                         resourceAwsImageBuilderImagePipeline(),
