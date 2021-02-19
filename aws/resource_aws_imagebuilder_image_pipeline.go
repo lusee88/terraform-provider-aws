@@ -29,6 +29,11 @@ func resourceAwsImageBuilderImagePipeline() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"container_recipe_arn": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringMatch(regexp.MustCompile(`^arn:aws[^:]*:imagebuilder:[^:]+:(?:\d{12}|aws):container-recipe/[a-z0-9-_]+/\d+\.\d+\.\d+$`), "valid container recipe ARN must be provided"),
+			},
 			"date_created": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -62,7 +67,7 @@ func resourceAwsImageBuilderImagePipeline() *schema.Resource {
 			},
 			"image_recipe_arn": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringMatch(regexp.MustCompile(`^arn:aws[^:]*:imagebuilder:[^:]+:(?:\d{12}|aws):image-recipe/[a-z0-9-_]+/\d+\.\d+\.\d+$`), "valid image recipe ARN must be provided"),
 			},
 			"image_tests_configuration": {
@@ -138,6 +143,10 @@ func resourceAwsImageBuilderImagePipelineCreate(d *schema.ResourceData, meta int
 	input := &imagebuilder.CreateImagePipelineInput{
 		ClientToken:                  aws.String(resource.UniqueId()),
 		EnhancedImageMetadataEnabled: aws.Bool(d.Get("enhanced_image_metadata_enabled").(bool)),
+	}
+
+	if v, ok := d.GetOk("container_recipe_arn"); ok {
+		input.ContainerRecipeArn = aws.String(v.(string))
 	}
 
 	if v, ok := d.GetOk("description"); ok {
@@ -225,6 +234,7 @@ func resourceAwsImageBuilderImagePipelineRead(d *schema.ResourceData, meta inter
 	d.Set("distribution_configuration_arn", imagePipeline.DistributionConfigurationArn)
 	d.Set("enhanced_image_metadata_enabled", imagePipeline.EnhancedImageMetadataEnabled)
 	d.Set("image_recipe_arn", imagePipeline.ImageRecipeArn)
+	d.Set("container_recipe_arn", imagePipeline.ContainerRecipeArn)
 
 	if imagePipeline.ImageTestsConfiguration != nil {
 		d.Set("image_tests_configuration", []interface{}{flattenImageBuilderImageTestsConfiguration(imagePipeline.ImageTestsConfiguration)})
@@ -265,6 +275,10 @@ func resourceAwsImageBuilderImagePipelineUpdate(d *schema.ResourceData, meta int
 			ClientToken:                  aws.String(resource.UniqueId()),
 			EnhancedImageMetadataEnabled: aws.Bool(d.Get("enhanced_image_metadata_enabled").(bool)),
 			ImagePipelineArn:             aws.String(d.Id()),
+		}
+
+		if v, ok := d.GetOk("container_recipe_arn"); ok {
+			input.ContainerRecipeArn = aws.String(v.(string))
 		}
 
 		if v, ok := d.GetOk("description"); ok {

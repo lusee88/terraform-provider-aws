@@ -72,6 +72,10 @@ func resourceAwsImageBuilderContainerRecipe() *schema.Resource {
 				ForceNew:     true,
 				ExactlyOneOf: []string{"dockerfile_template_data", "dockerfile_template_uri"},
 			},
+			"encrypted": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
 			"image_os_version_override": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -248,7 +252,7 @@ func resourceAwsImageBuilderContainerRecipeRead(d *schema.ResourceData, meta int
 	d.Set("parent_image", containerRecipe.ParentImage)
 	d.Set("platform", containerRecipe.Platform)
 	d.Set("tags", keyvaluetags.ImagebuilderKeyValueTags(containerRecipe.Tags).IgnoreAws().IgnoreConfig(ignoreTagsConfig).Map())
-	d.Set("version", containerRecipe.Version)
+	d.Set("semantic_version", containerRecipe.Version)
 	d.Set("target_repository", []interface{}{flattenImageBuilderTargetContainerRepository(containerRecipe.TargetRepository)})
 	d.Set("working_directory", containerRecipe.WorkingDirectory)
 
