@@ -226,6 +226,7 @@ func resourceAwsImageBuilderImagePipelineRead(d *schema.ResourceData, meta inter
 	imagePipeline := output.ImagePipeline
 
 	d.Set("arn", imagePipeline.Arn)
+	d.Set("container_recipe_arn", imagePipeline.ContainerRecipeArn)
 	d.Set("date_created", imagePipeline.DateCreated)
 	d.Set("date_last_run", imagePipeline.DateLastRun)
 	d.Set("date_next_run", imagePipeline.DateNextRun)
@@ -234,7 +235,6 @@ func resourceAwsImageBuilderImagePipelineRead(d *schema.ResourceData, meta inter
 	d.Set("distribution_configuration_arn", imagePipeline.DistributionConfigurationArn)
 	d.Set("enhanced_image_metadata_enabled", imagePipeline.EnhancedImageMetadataEnabled)
 	d.Set("image_recipe_arn", imagePipeline.ImageRecipeArn)
-	d.Set("container_recipe_arn", imagePipeline.ContainerRecipeArn)
 
 	if imagePipeline.ImageTestsConfiguration != nil {
 		d.Set("image_tests_configuration", []interface{}{flattenImageBuilderImageTestsConfiguration(imagePipeline.ImageTestsConfiguration)})
